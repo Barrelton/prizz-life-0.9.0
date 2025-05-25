@@ -5,8 +5,6 @@
 - Added fpscap command
 - Changed name slightly
 - Brought back multiple commands (all included in the list below)
-crash4 (crash with every gun [Useless?]
-DEBUG (DO NOT TOUCH)
 printdebug | Prints all Debug_ in console
 loadcrash | load formidicrash events into memory
 debugstop | Stops all debug
