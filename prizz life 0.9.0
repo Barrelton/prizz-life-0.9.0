@@ -4,6 +4,18 @@
 - Fixed AutoInfiniteAmmo (it's true when ran)
 - Added fpscap command
 - Changed name slightly
+- Brought back multiple commands (all included in the list below
+crash4 (crash with every gun [Useless?]
+DEBUG (DO NOT TOUCH)
+printdebug | Prints all Debug_ in console
+loadcrash | load formidicrash events into memory
+debugstop | Stops all debug
+chatdebug / cdeb | chat echo debug
+deletecmdslist | delete all frames in CMDS_List
+deletetogglelist | delete all frames in Toggles_List
+newlist | add list to CMDS_List
+newtoggleadd | new toggle to Toggles_List
+1 more too but I forgot :sob:
 ]]
 
 currentVersion = "0.9.0"
@@ -10069,7 +10081,7 @@ task.spawn(function()
 	AddList("crashnuke / cnuke [plr,random]", "deathnuke but the server crashes instead (CANNOT UNDO)", false) --V
 	AddList("laggygun / laggun", "Gives you remington 870 that lags the server when fired", false) --G
 	AddList("spike / freeze", "Lag spike everyone (Depends on their device)", false) --V
-	--AddList("placeholdercrash / crash4", "Crashes the server using every single gun", false) --too useless
+	AddList("placeholdercrash / crash4", "Crashes the server using every single gun [useless?]", false) --too useless
 
 	AddList("MISC CMDS", false, true) -- MISCELLANEOUS
 	AddList("forcefield / ff", "Enables forcefield (Basically just refresh guards)", false) --V
