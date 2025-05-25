@@ -1,3 +1,10 @@
+--[[
+ Changelog
+- Added infstamina (credits devguy100)
+- Fixed AutoInfiniteAmmo (it's true when ran)
+- Added fpscap command
+- Changed name slightly
+]]
 
 currentVersion = "0.9.0"
 
@@ -232,7 +239,7 @@ ScriptName.BorderColor3 = Color3.fromRGB(0, 0, 0)
 ScriptName.BorderSizePixel = 0
 ScriptName.Size = UDim2.new(0, 295, 0, 20)
 ScriptName.Font = Enum.Font.SourceSans
-ScriptName.Text = "PrizzLife v" .. currentVersion
+ScriptName.Text = "Basil's Config | PrizzLife v" .. currentVersion
 ScriptName.TextColor3 = Color3.fromRGB(255, 255, 255)
 ScriptName.TextSize = 18.000
 ScriptName.TextYAlignment = Enum.TextYAlignment.Top
@@ -587,6 +594,7 @@ local Saved = {
 	NormalJump = 50;
 	SpinToolRadius = 8;
 	SpinToolSpeed = 10;
+	FPS = 60;
 	KillDebounce = {};
 	MKillDebounce = {};
 	Cars = {};
@@ -600,7 +608,7 @@ local Toggles = {
 	AutoFireRate = false;
 	AutoGuns = false;
 	AutoItems = false;
-	AutoInfiniteAmmo = false;
+	AutoInfiniteAmmo = true;
 	AutoGunMods = false;
 	AntiBring = false;
 	AntiTase = false;
@@ -621,6 +629,8 @@ local Toggles = {
 	MeleeAura = false;
 	ArrestAura = false;
 	MeleeTouch = false;
+	AntiCheat = true;
+
 	TKA = {
 		Guard = false;
 		Inmate = false;
@@ -3317,6 +3327,7 @@ Tasks = {
 			end
 		end
 	end;
+
 	AntiCheat = function()
 		if States.AntiCheat then
 			task.spawn(function()
@@ -3471,6 +3482,7 @@ Tasks = {
 			end)
 		end
 	end;
+
 	LaunchNuke = function(target, radius, countdown)
 		if SavedArgs.NukeCooldown then
 			Notif("Error", "A nuke is already launching!")
@@ -6058,6 +6070,36 @@ local OnCommand = function(text)
 		States.JumpPower = false
 		LAction("jumppw", Saved.NormalJump)
 		Notif("OK", "Stopped-loopchanging jumppower.")
+		elseif cm("infinitestamina") or cm("infstamina") then  
+		Settings.InfStamina = not Settings.InfStamina  
+
+		if Settings.InfStamina then  
+			task.spawn(function()  
+				while Settings.InfStamina do  
+					for i, v in next, getgc() do  
+						if type(v) == "function" and getfenv(v).script and getfenv(v).script == game:GetService("Players").LocalPlayer.Character.ClientInputHandler then  
+							for i2, v2 in next, debug.getupvalues(v) do  
+								if type(v2) == "number" then  
+									debug.setupvalue(v, i2, math.huge)  
+								end  
+							end  
+						end  
+					end  
+					task.wait(0.1)  
+				end  
+			end)  
+		else  
+			for i, v in next, getgc() do  
+				if type(v) == "function" and getfenv(v).script and getfenv(v).script == game:GetService("Players").LocalPlayer.Character.ClientInputHandler then  
+					for i2, v2 in next, debug.getupvalues(v) do  
+						if type(v2) == "number" then  
+							debug.setupvalue(v, i2, 100)  
+						end  
+					end  
+				end  
+			end  
+		end 
+		Notif("OK", "Toggled infinite stamina to " .. tostring(Settings.InfStamina) .. ".")
 	elseif cm("infinitejump") or cm("infjump") or cm("infj") then
 		States.InfiniteJump = not States.InfiniteJump
 		if Args[2] == "on" or Args[2] == "true" then
@@ -6735,6 +6777,14 @@ local OnCommand = function(text)
 		end
 	elseif cm("unloopsounds") or cm("unlss") then
 		States.LoopSounds = false; Notif("OK", "Stopped looping sounds.")
+	elseif cm("fpscap") or cm("fps") then
+    local DaNumber = tonumber(Args[2])
+    if DaNumber then
+        setfpscap(DaNumber)
+        Notif("OK", "Set FPS cap to " .. DaNumber .. ".")
+    else
+        Notif("Error", "Invalid FPS value! Usage: fpscap [number]")
+    end
 	elseif cm("troll") or cm("tro") then
 		local trololol = PlrFromArgs(Args[2], LocalPlayer)
 		if not trololol and Args[2] == "random" then
@@ -9948,6 +9998,7 @@ task.spawn(function()
 	AddList("fullbright / fb [boolean]", "Toggle full brightness / always day", false) --V
 	AddList("noboard / nbr [boolean]", "Disables the leaderboard for tablet users to use punch button", false) --V
 	AddList("mobilegui / mgui [boolean]", "Toggle mobile action gui (Punch/Crawl buttons)", false) --V
+	AddList("infinitestamina / infstamina [boolean]", "Toggles infinite stamina", false) --V
 
 	AddList("POWERS/DEFENSE", false, true) --POWERS AND DEFENSE
 	AddList("onepunch / opunch [boolean]", "One-punch any player.", false) --V
@@ -9960,7 +10011,7 @@ task.spawn(function()
 	AddList("antiarrest / aar [boolean]", "Prevents you from being arrested", false) --V
 	AddList("antitase / atase [boolean]", "Prevents you from being tased", false) --V
 	AddList("arrestback / arb [boolean]", "If a guard tries to arrest you, they get arrested back", false) --V
-	--AddList("refresharrest / rantiar", "Anti-arrest but refreshes your character instead", false) --Useless command?
+	AddList("refresharrest / rantiar", "Anti-arrest but refreshes your character instead [useless?]", false) --Useless command?
 
 	AddList("CLICK CMDS", false, true) -- Click commands
 	AddList("clickkill / ckill [boolean]", "Click to kill player(s)", false) --V
@@ -10054,6 +10105,7 @@ task.spawn(function()
 	AddList("fard / fart [plr]", "Silent but deadly fart", false) --V, Haha funny fart joke please laugh sussy amogus skibidi toilet
 	AddList("carwalk / weldcar", "Makes you walk while a car is welded to your character", false) --V
 	AddList("troll / tro [plr,random]", "Troll a player by fake punchsounds", false) --V
+	AddList("fpscap / fps [amount]", "Sets your fps cap to the desired amount", false) -- (why tf does everything has V after it?)
 
 	AddList("TELEPORTS", false, true) --TELEPORT PLACE(S)
 	AddList("nexus / nex [plr or me]", "Teleports to the location: Nexus", false) --
@@ -10095,8 +10147,6 @@ task.spawn(function()
 	AddList("amongus", "Teleport you to amogus map (ONLY YOU CAN SEE IT)", false) --
 	AddList("mcdonalds", "Teleport you to mcdonalds (ONLY YOU CAN SEE IT)", false) --
 	AddList("minecraft", "Replace default skybox with a minecraft one", false) --
-
-	--[[ SUPER TOP SECRET, NOTHING TO SEE HERE!!!
 	AddList("DEBUG (DO NOT TOUCH)", false, true)
 	AddList("printdebug [boolean]", "Prints all Debug_ in console", false) --
 	AddList("loadcrash", "load formidicrash events into memory", false) --
@@ -10106,7 +10156,7 @@ task.spawn(function()
 	AddList("deletetogglelist", "delete all frames in Toggles_List", false) --
 	AddList("newlist [title] [desc] [iscategory]", "add list to CMDS_List", false) --
 	AddList("newtoggle [textbox=boolean] [title] [description]", "add new toggle to Toggles_List", false) --
-	]]--
+
 	--Toggles
 	NewToggleList("LocalPlayer_RunSpeed", "Default value is: 24", "click", function(arg)
 		local str = tonumber(arg)
